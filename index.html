@@ -54,6 +54,8 @@
 </div>  
 
 <script>
+
+  
 let questions = [];
 const PER_PAGE = 10;
 let currentPageIndex = 0;
@@ -61,6 +63,8 @@ let currentPageIndex = 0;
 async function loadQuestions(){
   const res = await fetch("questions.json");
   questions = await res.json();
+    console.log(questions); // yoxlamaq üçün
+
   renderQuiz();
 }
 
@@ -172,3 +176,4 @@ loadQuestions();
 </script>
 </body>
 </html>
+
