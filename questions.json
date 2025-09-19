@@ -167,7 +167,8 @@
           "answer": 2
         },
         {
-          "text": "16. Turşuqalığınınartmasınınsəbəbinə ilə bağlıdır?"+"<br>1) Sarsinlərin fəaliyyəti nəticəsində alınanməhsullar <br>2)    Süd-turşulu qıcqırması çöplərinin fəaliyyətinəticəsində alınanməhsullar <br>3)    Mədə möhtəviyatı durğunluğu <br>4)    Bədxassəli törəmənin dağılması nəticəsində əmələ gələnməhsullar",
+          "text": "16. Turşuqalığınınartmasınınsəbəbinə ilə bağlıdır?"+
+			"<br>1) Sarsinlərin fəaliyyəti nəticəsində alınanməhsullar <br>2)    Süd-turşulu qıcqırması çöplərinin fəaliyyətinəticəsində alınanməhsullar <br>3)    Mədə möhtəviyatı durğunluğu <br>4)    Bədxassəli törəmənin dağılması nəticəsində əmələ gələnməhsullar",
           "options": [
             
             "2,3,4",
@@ -10278,4 +10279,5 @@
           ],
           "answer": 2
         }
+
 ]
