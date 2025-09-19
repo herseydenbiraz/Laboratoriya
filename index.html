@@ -54,26 +54,15 @@
 </div>  
 
 <script>
-
-  
 let questions = [];
 const PER_PAGE = 10;
+let total = 0;
+let totalPages = 0;
 let currentPageIndex = 0;
-
-async function loadQuestions(){
-  const res = await fetch("questions.json");
-  questions = await res.json();
-    console.log(questions); // yoxlamaq üçün
-
-  renderQuiz();
-}
 
 function el(id){return document.getElementById(id)}
 
 function renderQuiz(){
-  const total = questions.length;
-  const totalPages = Math.ceil(total / PER_PAGE);
-
   const area = el("quizArea");
   area.innerHTML = "";
   const start = currentPageIndex*PER_PAGE;
@@ -115,8 +104,8 @@ function renderQuiz(){
     area.appendChild(card);
   }
 
-  renderPageButtons(total,totalPages);
-  updateControls(total,totalPages);
+  renderPageButtons();
+  updateControls();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -133,7 +122,7 @@ function onOptionClick(q,optElement,idx){
   }
 }
 
-function renderPageButtons(total,totalPages){
+function renderPageButtons(){
   const pb=el("pageButtons");
   pb.innerHTML="";
   for(let p=0;p<totalPages;p++){
@@ -148,21 +137,16 @@ function renderPageButtons(total,totalPages){
   }
 }
 
-function updateControls(total,totalPages){
+function updateControls(){
   el("prevBtn").disabled=(currentPageIndex===0);
   el("nextBtn").disabled=(currentPageIndex===totalPages-1);
 }
 
 function prevPage(){if(currentPageIndex>0){currentPageIndex--;renderQuiz();}}
-function nextPage(){
-  const total = questions.length;
-  const totalPages = Math.ceil(total / PER_PAGE);
-  if(currentPageIndex<totalPages-1){currentPageIndex++;renderQuiz();}
-}
+function nextPage(){if(currentPageIndex<totalPages-1){currentPageIndex++;renderQuiz();}}
 function goToPage(p){currentPageIndex=p;renderQuiz();}
 function goToQuestion(){
   const val = parseInt(document.getElementById("searchInput").value);
-  const total = questions.length;
   if(!val || val < 1 || val > total){
     alert("Düzgün sual nömrəsi daxil edin!");
     return;
@@ -172,8 +156,21 @@ function goToQuestion(){
   renderQuiz();
 }
 
+// JSON faylını yüklə
+async function loadQuestions(){
+  try {
+    const res = await fetch("questions.json");
+    if (!res.ok) throw new Error("JSON tapılmadı: " + res.status);
+    questions = await res.json();
+    total = questions.length;
+    totalPages = Math.ceil(total / PER_PAGE);
+    renderQuiz();
+  } catch (err) {
+    console.error(err);
+    el("quizArea").innerHTML = "<b>Xəta: suallar yüklənmədi.</b>";
+  }
+}
 loadQuestions();
 </script>
 </body>
 </html>
-
