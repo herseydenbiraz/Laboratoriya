@@ -1,21 +1,36 @@
-<div id="quizArea">Yüklənir...</div>
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="utf-8">
+  <title>Quiz Test</title>
+</head>
+<body>
+  <h1>Suallar</h1>
+  <div id="quizArea">Yüklənir...</div>
 
-<script>
-let questions = [];
+  <script>
+    async function loadQuestions(){
+      try {
+        const res = await fetch("questions.json");
+        if (!res.ok) throw new Error("Status " + res.status);
+        const questions = await res.json();
+        console.log("Suallar:", questions); // Console-də yoxla
 
-async function loadQuestions(){
-  const res = await fetch("questions.json");
-  questions = await res.json();
+        const area = document.getElementById("quizArea");
+        area.innerHTML = "";
 
-  const area = document.getElementById("quizArea");
-  area.innerHTML = "";
+        questions.forEach(q => {
+          const div = document.createElement("div");
+          div.innerHTML = `<b>${q.id}.</b> ${q.text}`;
+          area.appendChild(div);
+        });
+      } catch(err){
+        document.getElementById("quizArea").textContent = "Xəta: " + err.message;
+        console.error(err);
+      }
+    }
 
-  questions.forEach(q => {
-    const div = document.createElement("div");
-    div.innerHTML = `<b>${q.id}.</b> ${q.text}`;
-    area.appendChild(div);
-  });
-}
-
-loadQuestions();
-</script>
+    loadQuestions();
+  </script>
+</body>
+</html>
