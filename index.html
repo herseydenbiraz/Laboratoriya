@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Laboratoriya Kursu — Quiz</title>
+  <style>
+    body{font-family:Arial, sans-serif;background:#f6f8fb;margin:0;padding:20px;color:#111;}
+    .container{max-width:900px;margin:0 auto;}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+    .title{font-size:22px;font-weight:700;}
+    .course-badge{background:#ffdd57;padding:6px 12px;border-radius:6px;font-weight:700;}
+    .card{background:#fff;padding:15px;margin-bottom:15px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+    .q-text{font-size:18px;font-weight:600;margin-bottom:10px;}
+    .options{display:flex;flex-direction:column;gap:6px;}
+    .opt{display:flex;align-items:center;padding:10px;border-radius:8px;border:1px solid #ccc;background:#f9f9f9;cursor:pointer;transition:.2s;}
+    .opt:hover{background:#eef;}
+    .opt.disabled{cursor:not-allowed;opacity:.8;}
+    .opt.correct{background:#008000;color:#fff;border-color:#008000;}
+    .opt.wrong{background:#cc0000;color:#fff;border-color:#cc0000;}
+    .letter{font-weight:bold;margin-right:10px;width:22px;text-align:center;}
+    .footer-nav{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:20px;flex-wrap:wrap;}
+    .nav{display:flex;gap:10px;}
+    .btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:600;}
+    .btn.prev{background:#2b6cb0;color:#fff;}
+    .btn.next{background:#ffdd57;color:#111;}
+    .btn:disabled{opacity:.5;cursor:not-allowed;}
+    .page-buttons{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+    .page-btn{padding:6px 12px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;}
+    .page-btn.active{background:#2b6cb0;color:#fff;border-color:#2b6cb0;}
+  </style>
+</head>
+<body>
+<div style="text-align:center; margin-bottom:10px;">
+  <input type="number" id="searchInput" placeholder="Sual nömrəsi..." style="padding:5px; width:120px;">
+  <button onclick="goToQuestion()">Get</button>
+</div>
+
+<div class="container">
+  <header>
+    <div class="title">2025</div>
+    <div class="course-badge">Laboratoriya Kursu</div>
+  </header>
+
+  <div id="quizArea"></div>
+
+  <div class="footer-nav">
+    <div class="nav">
+      <button id="prevBtn" class="btn prev" onclick="prevPage()">Əvvəlki</button>
+      <button id="nextBtn" class="btn next" onclick="nextPage()">Sonrakı</button>
+    </div>
+    <div class="page-buttons" id="pageButtons"></div>
+  </div>
+</div>  
+
+<script>
+let questions = [];
+const PER_PAGE = 10;
+let currentPageIndex = 0;
+
+async function loadQuestions(){
+  try {
+    const res = await fetch("https://winter-darkness-2c14.herseydenbiraz4k.workers.dev/");
+    if (!res.ok) throw new Error("Suallar tapılmadı: " + res.status);
+    questions = await res.json();
+    renderQuiz();
+  } catch(err){
+    document.getElementById("quizArea").innerHTML = "Xəta: " + err.message;
+    console.error(err);
+  }
+}
+loadQuestions();
+
+function el(id){return document.getElementById(id)}
+
+function renderQuiz(){
+  const total = questions.length;
+  const totalPages = Math.ceil(total / PER_PAGE);
+
+  const area = el("quizArea");
+  area.innerHTML = "";
+  const start = currentPageIndex*PER_PAGE;
+  const end = Math.min(start+PER_PAGE,total);
+
+  for(let i=start;i<end;i++){
+    const q=questions[i];
+    const card=document.createElement("div");
+    card.className="card";
+
+    const qtext=document.createElement("div");
+    qtext.className="q-text";
+    qtext.innerHTML =  q.text;
+    const opts=document.createElement("div");
+    opts.className="options";
+
+    q.options.forEach((txt,idx)=>{
+      const opt=document.createElement("div");
+      opt.className="opt";
+      opt.dataset.optIndex=idx;
+      opt.onclick=()=>onOptionClick(q,opt,idx);
+
+      const letter=document.createElement("div");
+      letter.className="letter";
+      letter.textContent=String.fromCharCode(65+idx);
+
+      const span=document.createElement("div");
+      span.textContent=txt;
+
+      opt.appendChild(letter);
+      opt.appendChild(span);
+      opts.appendChild(opt);
+    });
+
+    card.appendChild(qtext);
+    card.appendChild(opts);
+    area.appendChild(card);
+  }
+
+  renderPageButtons(total,totalPages);
+  updateControls(total,totalPages);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function onOptionClick(q,optElement,idx){
+  const card=optElement.closest(".card");
+  const allOpts=card.querySelectorAll(".opt");
+  if([...allOpts].some(o=>o.classList.contains("correct"))) return;
+
+  if(idx===q.answer){
+    optElement.classList.add("correct");
+    allOpts.forEach(o=>o.classList.add("disabled"));
+  } else {
+    optElement.classList.add("wrong","disabled");
+  }
+}
+
+function renderPageButtons(total,totalPages){
+  const pb=el("pageButtons");
+  pb.innerHTML="";
+  for(let p=0;p<totalPages;p++){
+    const startQ=p*PER_PAGE+1;
+    const endQ=Math.min((p+1)*PER_PAGE,total);
+    const b=document.createElement("button");
+    b.className="page-btn";
+    b.textContent=`${startQ}-${endQ}`;
+    if(p===currentPageIndex) b.classList.add("active");
+    b.onclick=()=>goToPage(p);
+    pb.appendChild(b);
+  }
+}
+
+function updateControls(total,totalPages){
+  el("prevBtn").disabled=(currentPageIndex===0);
+  el("nextBtn").disabled=(currentPageIndex===totalPages-1);
+}
+
+function prevPage(){if(currentPageIndex>0){currentPageIndex--;renderQuiz();}}
+function nextPage(){
+  const total = questions.length;
+  const totalPages = Math.ceil(total / PER_PAGE);
+  if(currentPageIndex<totalPages-1){currentPageIndex++;renderQuiz();}
+}
+function goToPage(p){currentPageIndex=p;renderQuiz();}
+function goToQuestion(){
+  const val = parseInt(document.getElementById("searchInput").value);
+  const total = questions.length;
+  if(!val || val < 1 || val > total){
+    alert("Düzgün sual nömrəsi daxil edin!");
+    return;
+  }
+  const pageIdx = Math.floor((val-1) / PER_PAGE);
+  currentPageIndex = pageIdx;
+  renderQuiz();
+}
+</script>
+</body>
+</html>
