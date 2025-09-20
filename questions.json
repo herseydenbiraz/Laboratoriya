@@ -1,6 +1,6 @@
 [
         {
-          "text": "1. Kəskin bronxit zamanı bəlğəmdə nə aşkar olunur?",
+          "text": "1. Kəskin bronxit zamanı bəlğəmdə nə aşkar olunur?",
           "options": [
             "Hematoidin kristalları",
             "Silindrik səyriyici epitel",
@@ -11,7 +11,7 @@
           "answer": 1
         },
         {
-          "text": "2. Ağciyərabsesizamanı bəlğəmdə nə aşkarolunur?",
+          "text": "2. Ağciyərabsesizamanı bəlğəmdə nə aşkarolunur?",
           "options": [
             "Kirəcləşmiş elastik liflər",
             "Şarko-Leyden kristalları",
@@ -20,4 +20,27 @@
             "Nekrotik toxuma hissəcikləri"
           ],
           "answer": 4
-        }]
+        },
+        {
+          "text": "3. Bronxopnevmoniyalar zamanı bəlğəmdə nə tapılır?",
+          "options": [
+            "Eritrositlər",
+            "Kurşman spiralları",
+            "Piy infiltrasiyası ilə alveolyar makrofaqlar",
+            "Mərcanabənzər elastik liflər",
+            "Eozinofillər"
+          ],
+          "answer": 1
+        },
+        {
+          "text": "4. Bəlğəmdə elastiklifləraşağıdakı xəstəliklərdənhansındaaşkarolunmur?",
+          "options": [
+            "Vərəm",
+            "Ağciyərabssesi",
+            "Bronxektatikxəstəliklər",
+            "Xərçəng",
+            "Bronxialastma"
+          ],
+          "answer": 4
+        }
+]
