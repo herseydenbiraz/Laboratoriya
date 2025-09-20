@@ -63,6 +63,7 @@ async function loadQuestions(){
   questions = await res.json();
   renderQuiz();
 }
+  loadQuestions();
 
 function el(id){return document.getElementById(id)}
 
@@ -172,3 +173,4 @@ loadQuestions();
 </script>
 </body>
 </html>
+
